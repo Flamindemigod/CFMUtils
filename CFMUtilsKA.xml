@@ -1,0 +1,28 @@
+<GuiXml>
+    <Controls>
+        <TopLevelControl name="CFMUtilsKA" resizeToFitDescendents="true" clampedToScreen="true" mouseEnabled="true" movable="true">
+            <Dimensions x="64" y="64" />
+            <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="0"/>
+            <OnMoveStop>KA.OnCFMUtilsKAMove()</OnMoveStop>
+                <Controls>
+                     <!-- Sanguine Grasp -->
+                    <Label name="$(parent)Label1" font="$(BOLD_FONT)|$(KB_28)|soft-shadow-thick" color="ffffff" text="Skill Warning 1:" verticalAlignment="CENTER" horizontalAlignment="LEFT"  alpha="0.85" hidden="true">			
+                        <Dimensions x="300" y="30" />
+                        <Anchor point="BOTTOMLEFT"  relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+                    </Label>
+                    <Label name="$(parent)Label1Value" font="$(CHAT_FONT)|$(KB_28)|soft-shadow-thick" color="ff0000" text="69s" verticalAlignment="CENTER" horizontalAlignment="LEFT"  alpha="0.85" hidden="true">			
+                        <Anchor point="BOTTOMLEFT"  relativeTo="$(parent)Label1" relativePoint="BOTTOMRIGHT" offsetY="6"/>
+                    </Label>
+                    
+                    <!-- Blood Frenzy -->
+                    <Label name="$(parent)Label2" font="$(BOLD_FONT)|$(KB_28)|soft-shadow-thick" color="ffffff" text="Skill Warning 2:" verticalAlignment="CENTER" horizontalAlignment="LEFT"  alpha="0.85" hidden="true">			
+                        <Dimensions x="300" y="30" />
+                        <Anchor point="BOTTOMLEFT"  relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="40"/>
+                    </Label>
+                    <Label name="$(parent)Label2Value" font="$(CHAT_FONT)|$(KB_28)|soft-shadow-thick" color="ff0000" text="69s" verticalAlignment="CENTER" horizontalAlignment="LEFT"  alpha="0.85" hidden="true">			
+                        <Anchor point="BOTTOMLEFT"  relativeTo="$(parent)Label2" relativePoint="BOTTOMRIGHT" offsetY="6"/>
+                    </Label>                    
+                </Controls>
+        </TopLevelControl>
+    </Controls>
+</GuiXml>

@@ -1,0 +1,18 @@
+## Title: |cFF06E6Carries For Memes|r Group Utils
+## Description: Trackers and Helpful Utility made specificly with CFM in mind
+## Author: |cFFA500FlaminDemigod|r
+## APIVersion: 101035
+## DependsOn: CombatAlerts OdySupportIcons HodorReflexes LibSimpleArrow LibChatMessage LibAddonMenu-2.0
+## OptionalDependsOn: Testify BRHelper
+## SavedVariables: CarriesForMemesGroupUtilsVars
+## Version: 1.4.1
+## AddOnVersion: 141
+
+CFMUtilsData.lua
+CFMUtilsMisc.lua
+CFMUtilsAS.xml
+CFMUtilsAS.lua
+CFMUtilsKA.xml
+CFMUtilsKA.lua
+CFMUtilsMenu.lua
+CarriesForMemesGroupUtils.lua
