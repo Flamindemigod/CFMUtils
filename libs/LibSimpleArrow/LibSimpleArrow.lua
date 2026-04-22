@@ -16,7 +16,7 @@ local targetY = 0
 -- Functions
 
 local function GetTexturePath()
-	return CRHelper.name.."/texture/arrow1.dds"
+	return CRHelper.name .. "/texture/arrow1.dds"
 end
 
 function lib.GetTargetUnitTag()
@@ -42,8 +42,12 @@ end
 
 function lib.ApplyStyle(texture, color, scale)
 	ARROW:SetTexture(texture)
-	if color then ARROW:SetColor(unpack(color)) end
-	if scale then ARROW:SetScale(scale) end
+	if color then
+		ARROW:SetColor(unpack(color))
+	end
+	if scale then
+		ARROW:SetScale(scale)
+	end
 end
 
 local function GetDistancePlayerToPlayer(x1, y1, x2, y2)
@@ -51,11 +55,13 @@ local function GetDistancePlayerToPlayer(x1, y1, x2, y2)
 end
 
 local function AngleRotation(angle)
-	return angle - 2*math.pi * math.floor( (angle + math.pi) / 2*math.pi )
+	return angle - 2 * math.pi * math.floor((angle + math.pi) / 2 * math.pi)
 end
 
 local function GetRotationAngle(playerX, playerY, targetX, targetY)
-	return AngleRotation(-1*(AngleRotation(GetPlayerCameraHeading()) - math.atan2(playerX-targetX, playerY-targetY)))
+	return AngleRotation(
+		-1 * (AngleRotation(GetPlayerCameraHeading()) - math.atan2(playerX - targetX, playerY - targetY))
+	)
 end
 
 function lib.SetTarget(target)
@@ -63,19 +69,13 @@ function lib.SetTarget(target)
 end
 
 function lib.ShowArrow()
-
 	ARROW:SetHidden(false)
 	EVENT_MANAGER:UnregisterForUpdate("LibSimpleArrowUpdate")
-	EVENT_MANAGER:RegisterForUpdate(
-        "LibSimpleArrowUpdate", 
-        REFRESH_TIME, 
-        function()
-			local playerX, playerY = GetMapPlayerPosition(PLAYER_UNIT_TAG)
-			--local targetX, targetY = GetMapPlayerPosition(targetUnitTag)
-			ARROW:SetTextureRotation(GetRotationAngle(playerX, playerY, targetX, targetY))
-        end
-    )
-
+	EVENT_MANAGER:RegisterForUpdate("LibSimpleArrowUpdate", REFRESH_TIME, function()
+		local playerX, playerY = GetMapPlayerPosition(PLAYER_UNIT_TAG)
+		-- local targetX, targetY = GetMapPlayerPosition(targetUnitTag)
+		ARROW:SetTextureRotation(GetRotationAngle(playerX, playerY, targetX, targetY))
+	end)
 end
 
 function lib.HideArrow()
