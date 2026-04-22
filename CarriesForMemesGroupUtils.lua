@@ -142,6 +142,9 @@ end
 function cfmutils.OnAddonLoaded(e, addon)
 	if addon == cfmutils.name then
 		SLASH_COMMANDS["/cfmutils"] = cfmutils.HandleSlashCommand
+		for k, v in pairs(cfmutils.SlashCommands) do
+			SLASH_COMMANDS[k] = v.exec
+		end
 		cfmutils.savedVars = ZO_SavedVars:NewCharacterIdSettings(
 			cfmutils.varsName,
 			cfmutils.variableVersion,

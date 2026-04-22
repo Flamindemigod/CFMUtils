@@ -259,3 +259,212 @@ cfmutils.ToxicTextPlayer = {
 		"Maybe you should go back to tanking",
 	},
 }
+local cachedCakeId
+
+local function GetJubileeCakeCollectibleId()
+	if not cachedCakeId then
+		local categoryData = ZO_COLLECTIBLE_DATA_MANAGER:GetCategoryDataById(TOOLS_CATEGORY_ID)
+		local numCollectibles = categoryData:GetNumCollectibles()
+		if numCollectibles > 0 then
+			cachedCakeId = categoryData:GetCollectibleDataByIndex(numCollectibles):GetId()
+		end
+	end
+	return cachedCakeId
+end
+
+local function SlashCollectible(id)
+	local HousingBlacklist = {
+		--Assistants
+		[267] = true, --Tythis Andromo, the Banker
+		[300] = true, --Pirharri the Smuggler
+		[301] = true, --Nuzhimeh the Merchant
+		[396] = true, --Allaria Erwen the Exporter
+		[397] = true, --Cassus Andronicus the Mercenary
+		[6376] = true, --Ezabi the Banker
+		[6378] = true, --Fezez the Merchant
+		[8994] = true, --Baron Jangleplume, the Banker
+		[8995] = true, --Peddler of Prizes, the Merchant
+		[9743] = true, --Factotum Property Steward
+		[9744] = true, --Factotum Commerce Delegate
+		[11056] = true, --Hoarfrost, Takubar Trader
+		[11097] = true, --Pyroclast, Infernace Conservator
+		[12413] = true, --Eri, Barking Banker
+		[12414] = true, --Xyn, Planar Purveyor
+		[13066] = true, --Terilorne, Dibellan Freetrader
+		[13517] = true, --Celia Tyde, Lost Fleet Bursar
+
+		--Armory Assistants
+		[9745] = true, --Ghrasharog, Armory Assistant
+		[10618] = true, --Zuqoth, Armory Advisor
+		[13518] = true, --Voko, Carnaval Weapondancer
+		--Deconstruction Assistants
+		[10184] = true, --Giladil the Ragpicker
+		[10617] = true, --Aderene, Fargrave Dregs Dealer
+		[11876] = true, --Drinweth, Valenwood Armorer
+		[11877] = true, --Tzozabrar, Dwarven Deconstructor
+		[13063] = true, --Siluruz, Realm Craftsmaster
+		[14018] = true, --Pontius Remus, Lupine Scavenger
+
+		--Companions
+		[9245] = true, --Bastian Hallix
+		[9353] = true, --Mirri Elendis
+		[9911] = true, --Ember
+		[9912] = true, --Isobel Veloise
+		[11113] = true, --Sharp-as-Night
+		[11114] = true, --Azandar al-Cybiades
+		[12173] = true, --Zerith-var
+		[12172] = true, --Tanlorin
+	}
+	if id == nil or id == "" or id == 1 then
+		cfmutils.Debug("Id provided is not a valid collectible id")
+		return
+	end
+	if IsInImperialCity() or IsPlayerInAvAWorld() or IsActiveWorldBattleground() then
+		cfmutils.Debug("Player is currently in a PvP instance. Cannot use collectible")
+		return nil
+	end
+	local currentHouse = GetCurrentZoneHouseId()
+	if HousingBlacklist[id] ~= nil and currentHouse ~= nil and currentHouse > 0 then
+		cfmutils.Debug(string.format("Cannot use %s within a house", GetCollectibleName(id)))
+		return nil
+	end
+	if not IsCollectibleUnlocked(id) then
+		cfmutils.Debug(string.format("Cannot use %s as you dont have it unlocked", GetCollectibleName(id)))
+		return nil
+	end
+	UseCollectible(id, GAMEPLAY_ACTOR_CATEGORY_PLAYER)
+end
+
+cfmutils.SlashCommands = {
+	["/home"] = {
+		title = "Home",
+		desc = "Teleport To Primary Residence",
+		help = '/home ["inside" | "outside"]',
+		exec = function(option)
+			if option and option ~= "" and (option ~= "inside" or option ~= "outside") then
+				cfmutils.Debug("Warn: /home [opt] expects `inside` or `outside` as the optional arg. Got " .. option)
+				option = nil
+			end
+			if IsUnitInCombat("player") then
+				cfmutils.Debug("Player is currently in combat. Cannot Port")
+				return nil
+			end
+			if IsInImperialCity() or IsPlayerInAvAWorld() or IsActiveWorldBattleground() then
+				cfmutils.Debug("Player is currently in a PvP instance. Cannot Port")
+				return nil
+			end
+			local primaryHouse = GetHousingPrimaryHouse()
+			if primaryHouse == 0 then
+				cfmutils.Debug("Player does not have a primary residence set")
+				return nil
+			end
+			option = option or "inside"
+			RequestJumpToHouse(primaryHouse, option == "outside")
+			cfmutils.Debug("Porting to Primary Residence " .. (option == "outside" and "(Outside)" or "(Inside)"))
+		end,
+	},
+	["/setprimaryhome"] = {
+		title = "Set Primary Home",
+		desc = "Sets the current house as the player's primary residence",
+		help = "/setprimaryhome",
+		exec = function()
+			local currentHouse = GetCurrentZoneHouseId()
+			if currentHouse == nil or currentHouse <= 0 then
+				cfmutils.Debug("Currenltly not in a house")
+				return nil
+			end
+			if not IsOwnerOfCurrentHouse() then
+				cfmutils.Debug("This house isnt yours. Cannot set it as primary")
+				return nil
+			end
+			if IsPrimaryHouse(currentHouse) then
+				cfmutils.Debug("You already have this house as your primary residence")
+				return nil
+			end
+			SetHousingPrimaryHouse(currentHouse)
+			cfmutils.Debug(string.format("Set %s as primary residence", GetPlayerActiveZoneName()))
+		end,
+	},
+	["/trade"] = {
+		title = "Trade",
+		desc = "Trade with user",
+		help = "/trade <@username>",
+		exec = function(option)
+			if option == nil or option == "" then
+				cfmutils.Debug("Warn: /trade <@username> expects a username to be provided")
+				return nil
+			end
+			TradeInviteByName(option)
+		end,
+	},
+	["/banker"] = {
+		title = "Banker",
+		desc = "Summon Banker",
+		help = "/banker",
+		exec = function()
+			SlashCollectible(6376)
+		end,
+	},
+	["/bank"] = {
+		title = "Banker",
+		desc = "Summon Banker",
+		help = "/bank",
+		exec = function()
+			SlashCollectible(6376)
+		end,
+	},
+	["/merchant"] = {
+		title = "Merchant",
+		desc = "Summon Merchant",
+		help = "/merchant",
+		exec = function()
+			SlashCollectible(6378)
+		end,
+	},
+	["/sell"] = {
+		title = "Merchant",
+		desc = "Summon Merchant",
+		help = "/sell",
+		exec = function()
+			SlashCollectible(6378)
+		end,
+	},
+	["/fence"] = {
+		title = "Fence",
+		desc = "Summon Pirharri the Smuggler",
+		help = "/fence",
+		exec = function()
+			SlashCollectible(300)
+		end,
+	},
+	["/cake"] = {
+		title = "Cake",
+		desc = "Spawn Jubilee Cake",
+		help = "/cake",
+		exec = function()
+			SlashCollectible(GetJubileeCakeCollectibleId())
+		end,
+	},
+	["/leavegroup"] = {
+		title = "Leave Group",
+		desc = "Leave the current group",
+		help = "/leavegroup",
+		exec = GroupLeave,
+	},
+	["/eye"] = {
+		title = "Antiquarian's Eye",
+		desc = "Use the Antiquarian's Eye",
+		help = "/eye",
+		exec = function()
+			SlashCollectible(8006)
+		end,
+	},
+	-- ["/template"] = {
+	--     title = "Template",
+	--     desc =  "Template Description",
+	--     help = "/template ...",
+	--     exec = function(option)
+	--         return nil
+	--     end
+	-- },
+}
