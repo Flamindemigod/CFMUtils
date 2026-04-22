@@ -341,7 +341,7 @@ cfmutils.SlashCommands = {
 		desc = "Teleport To Primary Residence",
 		help = '/home ["inside" | "outside"]',
 		exec = function(option)
-			if option and option ~= "" and (option ~= "inside" or option ~= "outside") then
+			if option and option ~= "" and (option ~= "inside" and option ~= "outside") then
 				cfmutils.Debug("Warn: /home [opt] expects `inside` or `outside` as the optional arg. Got " .. option)
 				option = nil
 			end
